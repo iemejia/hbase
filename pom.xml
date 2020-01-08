@@ -1008,6 +1008,12 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>extra-enforcer-rules</artifactId>
             <version>${extra.enforcer.version}</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-util</artifactId>
+              </exclusion>
+            </exclusions>
           </dependency>
           <dependency>
             <groupId>de.skuzzle.enforcer</groupId>
@@ -1581,7 +1587,7 @@
     <argLine>${hbase-surefire.argLine}</argLine>
     <jacoco.version>0.7.5.201505241946</jacoco.version>
     <extra.enforcer.version>1.0-beta-9</extra.enforcer.version>
-    <enforcer.version>3.0.0-M2</enforcer.version>
+    <enforcer.version>3.0.0-M3</enforcer.version>
     <restrict-imports.enforcer.version>0.14.0</restrict-imports.enforcer.version>
     <!-- Location of test resources -->
     <test.build.classes>${project.build.directory}/test-classes</test.build.classes>
@@ -3814,6 +3820,43 @@
             </plugin>
           </plugins>
         </pluginManagement>
+      </build>
+    </profile>
+    <profile>
+      <id>linkage-checker</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>${enforcer.version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>linkage-checker-enforcer-rules</artifactId>
+                <version>1.1.1</version>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <id>enforce-linkage-checker</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <LinkageCheckerRule implementation="com.google.cloud.tools.dependencies.enforcer.LinkageCheckerRule">
+<!--                      <dependencySection>DEPENDENCY_MANAGEMENT</dependencySection>-->
+<!--                      <reportOnlyReachable>true</reportOnlyReachable>-->
+                      <level>WARN</level>
+                    </LinkageCheckerRule>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>
